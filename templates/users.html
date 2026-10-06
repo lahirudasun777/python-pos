@@ -1,0 +1,15 @@
+{% extends 'base.html' %}{% block title %}Users{% endblock %}
+{% block content %}
+<div class="head"><div><h1>Users</h1><div class="muted">Admins manage everything · Cashiers can only sell and see their own sales</div></div>
+  <a class="btn primary" href="{{ url_for('user_form') }}">+ Add user</a></div>
+<div class="card tbl"><table>
+  <tr><th>Name</th><th>Username</th><th>Role</th><th>Status</th><th class="num">Sales</th><th></th></tr>
+  {% for u in rows %}<tr>
+    <td><b>{{ u.full_name }}</b></td><td class="muted">{{ u.username }}</td>
+    <td><span class="pill {{ 'ok' if u.role=='admin' }}">{{ u.role }}</span></td>
+    <td><span class="pill {{ 'ok' if u.active else 'bad' }}">{{ 'active' if u.active else 'disabled' }}</span></td>
+    <td class="num">{{ u.n }}</td>
+    <td class="num"><a class="btn sm" href="{{ url_for('user_form', uid=u.id) }}">Edit</a></td>
+  </tr>{% endfor %}
+</table></div>
+{% endblock %}

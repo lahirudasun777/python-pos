@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sign in · {{ shop }}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head><body>
+<div class="login-wrap">
+  <div class="login">
+    <div class="logo"><span>P</span>{{ shop }}</div>
+    <p class="muted" style="text-align:center;margin:0 0 22px">Sign in to continue</p>
+    {% with msgs = get_flashed_messages(with_categories=true) %}
+      {% for cat, m in msgs %}<div class="flash {{ cat }}">{{ m }}</div>{% endfor %}
+    {% endwith %}
+    <form method="post" class="card">
+      <div class="field"><label>Username</label><input name="username" autofocus required autocomplete="username"></div>
+      <div class="field"><label>Password</label><input name="password" type="password" required autocomplete="current-password"></div>
+      <button class="btn primary big">Sign in</button>
+    </form>
+  </div>
+</div>
+</body></html>

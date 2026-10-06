@@ -1,0 +1,2 @@
+{% extends 'base.html' if me else 'login.html' %}
+{% block content %}<div class="card empty" style="max-width:420px;margin:60px auto"><h1>{{ code }}</h1><p>{{ msg }}</p><a class="btn" href="{{ url_for('home') }}">Go home</a></div>{% endblock %}

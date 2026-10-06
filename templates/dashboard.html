@@ -1,0 +1,41 @@
+{% extends 'base.html' %}{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="head"><div><h1>Dashboard</h1><div class="muted">Today at a glance</div></div>
+  <a class="btn primary" href="{{ url_for('pos') }}">+ New sale</a></div>
+
+<div class="grid g4" style="margin-bottom:16px">
+  <div class="card stat"><div class="k">Sales today</div><div class="v">{{ t.s|money }}</div></div>
+  <div class="card stat"><div class="k">Bills today</div><div class="v">{{ t.n }}</div></div>
+  <div class="card stat"><div class="k">Profit today</div><div class="v">{{ profit_today|money }}</div></div>
+  <div class="card stat"><div class="k">This month</div><div class="v">{{ m.s|money }}</div></div>
+</div>
+
+<div class="grid g2" style="margin-bottom:16px">
+  <div class="card"><h2>Last 7 days</h2>
+    <div class="bars">{% for c in chart %}
+      <div class="bar" title="{{ c.value|money }}"><i style="height:{{ (c.value / peak * 100)|round(1) }}%"></i><span>{{ c.label }}</span></div>
+    {% endfor %}</div>
+  </div>
+  <div class="card"><h2>Top products this month</h2>
+    {% if top %}<table>{% for r in top %}<tr><td>{{ r.name }}</td><td class="num muted">{{ r.qty }} sold</td><td class="num">{{ r.amt|money }}</td></tr>{% endfor %}</table>
+    {% else %}<div class="empty">No sales yet this month.</div>{% endif %}
+  </div>
+</div>
+
+<div class="grid g2">
+  <div class="card tbl"><div style="padding:18px 18px 0"><h2>Recent sales</h2></div>
+    {% if recent %}<table>
+      <tr><th>Invoice</th><th>Cashier</th><th>Time</th><th class="num">Total</th></tr>
+      {% for s in recent %}<tr>
+        <td><a href="{{ url_for('sale_detail', sid=s.id) }}"><b>{{ s.invoice_no }}</b></a> {% if s.status=='void' %}<span class="pill bad">void</span>{% endif %}</td>
+        <td class="muted">{{ s.full_name }}</td><td class="muted">{{ s.created_at|dt }}</td><td class="num">{{ s.total|money }}</td></tr>{% endfor %}
+    </table>{% else %}<div class="empty">No sales yet.</div>{% endif %}
+  </div>
+  <div class="card tbl"><div style="padding:18px 18px 0"><h2>Low stock</h2></div>
+    {% if low %}<table>{% for p in low %}<tr><td>{{ p.name }}</td>
+      <td class="num"><span class="pill {{ 'bad' if p.stock == 0 else 'warn' }}">{{ p.stock }} left</span></td>
+      <td class="num"><form class="inline" method="post" action="{{ url_for('add_stock', pid=p.id) }}"><input name="qty" type="number" placeholder="+qty"><button class="btn sm">Add</button></form></td></tr>{% endfor %}</table>
+    {% else %}<div class="empty">All products are well stocked.</div>{% endif %}
+  </div>
+</div>
+{% endblock %}

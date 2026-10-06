@@ -1,0 +1,22 @@
+{% extends 'base.html' %}{% block title %}Product{% endblock %}
+{% block content %}
+<div class="head"><h1>{{ 'Edit product' if p and p.id else 'New product' }}</h1></div>
+<form method="post" class="card" style="max-width:640px">
+  <div class="row">
+    <div class="field"><label>Name *</label><input name="name" value="{{ p.name if p else '' }}" required></div>
+    <div class="field"><label>Barcode</label><input name="barcode" value="{{ (p.barcode or '') if p else '' }}"></div>
+  </div>
+  <div class="field"><label>Category</label><select name="category_id"><option value="">— None —</option>
+    {% for c in cats %}<option value="{{ c.id }}" {{ 'selected' if p and p.category_id|string == c.id|string }}>{{ c.name }}</option>{% endfor %}</select></div>
+  <div class="row">
+    <div class="field"><label>Selling price *</label><input name="price" type="number" step="0.01" min="0" value="{{ p.price if p else '' }}" required></div>
+    <div class="field"><label>Cost price</label><input name="cost" type="number" step="0.01" min="0" value="{{ p.cost if p else 0 }}"></div>
+  </div>
+  <div class="row">
+    <div class="field"><label>Stock</label><input name="stock" type="number" value="{{ p.stock if p else 0 }}"></div>
+    <div class="field"><label>Low stock alert at</label><input name="low_stock" type="number" value="{{ p.low_stock if p else 5 }}"></div>
+  </div>
+  <div class="field"><label class="check"><input type="checkbox" name="active" {{ 'checked' if not p or p.active }}> Active (show on POS)</label></div>
+  <div class="row"><button class="btn primary">Save</button><a class="btn" href="{{ url_for('products') }}">Cancel</a></div>
+</form>
+{% endblock %}

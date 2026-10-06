@@ -1,0 +1,53 @@
+{% extends 'base.html' %}{% block title %}New Sale{% endblock %}
+{% block content %}
+<div class="pos">
+  <section class="pos-left">
+    <div class="pos-tools">
+      <input id="search" placeholder="Search name or scan barcode, then Enter…" autofocus autocomplete="off">
+    </div>
+    <div class="chips" id="chips">
+      <button class="chip on" data-cat="">All</button>
+      {% for c in cats %}<button class="chip" data-cat="{{ c.id }}">{{ c.name }}</button>{% endfor %}
+    </div>
+    <div class="prods" id="prods"></div>
+  </section>
+
+  <aside class="card cart">
+    <div class="cart-h"><h2 style="margin:0">Current sale</h2><button class="btn sm danger" id="clear">Clear</button></div>
+    <div class="cart-items" id="cart"></div>
+    <div class="cart-f">
+      <div class="sum"><span>Subtotal</span><b id="sub">0.00</b></div>
+      <div class="sum"><span>Discount</span><b id="dis">0.00</b></div>
+      {% if tax_rate %}<div class="sum"><span>Tax ({{ (tax_rate*100)|round(1) }}%)</span><b id="tax">0.00</b></div>{% endif %}
+      <div class="sum total"><span>Total</span><b id="tot">0.00</b></div>
+      <div class="pay" id="pay">
+        <button class="on" data-m="cash">Cash</button><button data-m="card">Card</button><button data-m="qr">QR</button>
+      </div>
+      <div class="pay-row">
+        <div><label>Discount ({{ cur }})</label><input id="discount" type="number" min="0" step="0.01" value=""></div>
+        <div id="paidBox"><label>Cash received</label><input id="paid" type="number" min="0" step="0.01"></div>
+      </div>
+      <div class="sum" id="chgRow"><span>Change</span><b id="chg">0.00</b></div>
+      <button class="btn green big" id="checkout" disabled>Charge</button>
+    </div>
+  </aside>
+</div>
+
+<div class="modal" id="done"><div class="card">
+  <div class="tick">✓</div><h2 style="margin-bottom:4px">Sale complete</h2>
+  <div class="muted" id="doneInv"></div>
+  <div style="font-size:22px;font-weight:700;margin:12px 0" id="doneChg"></div>
+  <div class="row" style="justify-content:center">
+    <a class="btn" id="doneRcpt" target="_blank">Print receipt</a>
+    <button class="btn primary" id="doneNew">New sale</button>
+  </div>
+</div></div>
+{% endblock %}
+{% block scripts %}
+<script>
+const PRODUCTS = {{ prods|tojson }};
+const CUR = {{ cur|tojson }}, TAX = {{ tax_rate }};
+const RECEIPT_URL = "{{ url_for('receipt', sid=0) }}".replace(/0$/, "");
+</script>
+<script src="{{ url_for('static', filename='pos.js') }}"></script>
+{% endblock %}

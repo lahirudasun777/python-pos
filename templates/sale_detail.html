@@ -1,0 +1,19 @@
+{% extends 'base.html' %}{% block title %}{{ s.invoice_no }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>{{ s.invoice_no }} <span class="pill {{ 'ok' if s.status=='completed' else 'bad' }}">{{ s.status }}</span></h1>
+  <div class="muted">{{ s.created_at|dt }} · {{ s.full_name }} · {{ s.payment_method|capitalize }}</div></div>
+  <div class="row"><a class="btn" href="{{ url_for('receipt', sid=s.id) }}" target="_blank">Print receipt</a>
+  {% if me.role=='admin' and s.status=='completed' %}
+    <form method="post" action="{{ url_for('void_sale', sid=s.id) }}" onsubmit="return confirm('Void this sale and return items to stock?')"><button class="btn danger">Void sale</button></form>
+  {% endif %}</div></div>
+<div class="card tbl" style="max-width:720px"><table>
+  <tr><th>Item</th><th class="num">Price</th><th class="num">Qty</th><th class="num">Amount</th></tr>
+  {% for i in items %}<tr><td>{{ i.name }}</td><td class="num">{{ i.price|money }}</td><td class="num">{{ i.qty }}</td><td class="num">{{ i.line_total|money }}</td></tr>{% endfor %}
+  <tr><td colspan="3" class="num muted">Subtotal</td><td class="num">{{ s.subtotal|money }}</td></tr>
+  {% if s.discount %}<tr><td colspan="3" class="num muted">Discount</td><td class="num">− {{ s.discount|money }}</td></tr>{% endif %}
+  {% if s.tax %}<tr><td colspan="3" class="num muted">Tax</td><td class="num">{{ s.tax|money }}</td></tr>{% endif %}
+  <tr><td colspan="3" class="num"><b>Total</b></td><td class="num"><b>{{ s.total|money }}</b></td></tr>
+  <tr><td colspan="3" class="num muted">Paid</td><td class="num">{{ s.paid|money }}</td></tr>
+  <tr><td colspan="3" class="num muted">Change</td><td class="num">{{ s.change_due|money }}</td></tr>
+</table></div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}{% block title %}Sales{% endblock %}
+{% block content %}
+<div class="head"><div><h1>{{ 'Sales' if me.role=='admin' else 'My sales' }}</h1><div class="muted">{{ d_from }} → {{ d_to }}</div></div>
+  <form class="row">
+    <div><label>From</label><input type="date" name="from" value="{{ d_from }}"></div>
+    <div><label>To</label><input type="date" name="to" value="{{ d_to }}"></div>
+    {% if me.role=='admin' %}<div><label>Cashier</label><select name="user"><option value="">All</option>
+      {% for u in users %}<option value="{{ u.id }}" {{ 'selected' if sel_user==u.id|string }}>{{ u.full_name }}</option>{% endfor %}</select></div>{% endif %}
+    <button class="btn">Filter</button></form></div>
+<div class="grid g4" style="margin-bottom:16px">
+  <div class="card stat"><div class="k">Total sales</div><div class="v">{{ summary.total|money }}</div></div>
+  <div class="card stat"><div class="k">Bills</div><div class="v">{{ summary.count }}</div></div>
+  <div class="card stat"><div class="k">Cash</div><div class="v">{{ summary.cash|money }}</div></div>
+  <div class="card stat"><div class="k">Card / QR</div><div class="v">{{ summary.card|money }}</div></div>
+</div>
+<div class="card tbl">{% if rows %}<table>
+  <tr><th>Invoice</th><th>Date</th><th>Cashier</th><th>Payment</th><th>Status</th><th class="num">Total</th><th></th></tr>
+  {% for s in rows %}<tr style="{{ 'opacity:.55' if s.status=='void' }}">
+    <td><b>{{ s.invoice_no }}</b></td><td class="muted">{{ s.created_at|dt }}</td><td class="muted">{{ s.full_name }}</td>
+    <td><span class="pill">{{ s.payment_method }}</span></td>
+    <td><span class="pill {{ 'ok' if s.status=='completed' else 'bad' }}">{{ s.status }}</span></td>
+    <td class="num"><b>{{ s.total|money }}</b></td>
+    <td class="num"><a class="btn sm" href="{{ url_for('sale_detail', sid=s.id) }}">View</a></td>
+  </tr>{% endfor %}
+</table>{% else %}<div class="empty">No sales in this period.</div>{% endif %}</div>
+{% endblock %}
